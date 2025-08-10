@@ -300,6 +300,30 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Dedicated Server specific ignores
+deploy/
+logs/
+*.pid
+server.log
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# Docker volumes and data
+docker-data/
+.env
+
+# Certificates and keys
+*.pfx
+*.p12
+*.key
+*.crt
+*.cert
+
+# Temporary files
+*.tmp
+*.temp
+
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config

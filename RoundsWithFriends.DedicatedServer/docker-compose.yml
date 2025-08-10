@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  rwf-server:
+    build:
+      context: .
+      dockerfile: RoundsWithFriends.DedicatedServer/Dockerfile
+    container_name: rwf-dedicated-server
+    ports:
+      - "7777:7777"      # Game server port
+      - "8080:8080"      # Web admin port
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Server__Name=RWF Docker Server
+      - Server__Port=7777
+      - Server__MaxPlayers=16
+      - Server__EnableWebAdmin=true
+      - Server__WebAdminPort=8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - rwf-network
+
+  # Optional: Reverse proxy for web admin
+  nginx:
+    image: nginx:alpine
+    container_name: rwf-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - rwf-server
+    restart: unless-stopped
+    networks:
+      - rwf-network
+
+networks:
+  rwf-network:
+    driver: bridge
