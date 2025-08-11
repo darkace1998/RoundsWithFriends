@@ -11,6 +11,20 @@ public class ServerConfiguration
     public bool EnableConsole { get; set; } = true;
     public bool EnableWebAdmin { get; set; } = false;
     public int WebAdminPort { get; set; } = 8080;
+    public bool EnableDebugEndpoints { get; set; } = false;
+    public bool EnableDetailedLogging { get; set; } = false;
+    public bool LogPlayerConnections { get; set; } = true;
+    public bool LogNetworkMessages { get; set; } = false;
+}
+
+public class DebugConfiguration
+{
+    public bool EnableDebugConsole { get; set; } = false;
+    public bool EnableHealthMonitoring { get; set; } = false;
+    public int HealthCheckInterval { get; set; } = 30;
+    public bool EnablePerformanceMetrics { get; set; } = false;
+    public bool EnableStackTraces { get; set; } = false;
+    public bool LogMemoryUsage { get; set; } = false;
 }
 
 public class GameConfiguration
