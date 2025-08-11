@@ -50,9 +50,30 @@ echo ""
 
 # Check if Unity mod can be built (requires ROUNDS game assemblies)
 echo "Checking Unity Mod dependencies..."
-ROUNDS_FOLDER="C:\\Program Files (x86)\\Steam\\steamapps\\common\\ROUNDS"
-if [ -d "/mnt/c/Program Files (x86)/Steam/steamapps/common/ROUNDS" ] || [ -d "$HOME/.steam/steam/steamapps/common/ROUNDS" ]; then
-    echo "✅ ROUNDS installation detected, attempting Unity Mod build..."
+
+# Flexible ROUNDS installation detection
+ROUNDS_PATHS=()
+# User-specified path via environment variable
+if [ -n "$ROUNDS_PATH" ]; then
+    ROUNDS_PATHS+=("$ROUNDS_PATH")
+fi
+# Common Steam library locations
+ROUNDS_PATHS+=("/mnt/c/Program Files (x86)/Steam/steamapps/common/ROUNDS")
+ROUNDS_PATHS+=("$HOME/.steam/steam/steamapps/common/ROUNDS")
+ROUNDS_PATHS+=("$HOME/.local/share/Steam/steamapps/common/ROUNDS")
+ROUNDS_PATHS+=("/Applications/Steam.app/Steam/steamapps/common/ROUNDS") # macOS
+
+FOUND_ROUNDS=""
+for path in "${ROUNDS_PATHS[@]}"; do
+    if [ -d "$path" ]; then
+        FOUND_ROUNDS="$path"
+        break
+    fi
+done
+
+if [ -n "$FOUND_ROUNDS" ]; then
+    echo "✅ ROUNDS installation detected at: $FOUND_ROUNDS"
+    echo "   Attempting Unity Mod build..."
     dotnet build "$UNITY_MOD_PROJECT" --configuration "$CONFIGURATION" --no-restore
     if [ $? -eq 0 ]; then
         echo "✅ Unity Mod build completed successfully"
